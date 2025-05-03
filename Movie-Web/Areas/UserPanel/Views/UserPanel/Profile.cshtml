@@ -1,0 +1,53 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+
+
+<section class="m-profile manage-p" data-select2-id="16">
+    <div class="container h-100">
+        <div class="row align-items-center justify-content-center h-100">
+            <div class="col-lg-10">
+                <div class="sign-user_card">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="upload_profile d-inline-block">
+                                <img src="/images/user/user.jpg" class="profile-pic rounded-circle img-fluid" alt="user">
+                                <div class="p-image">
+                                    <i class="ri-pencil-line upload-button"></i>
+                                    <input class="file-upload" type="file" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-10 device-margin">
+                            <div class="profile-from">
+                                <h4 class="mb-3">مدیریت نمایه</h4>
+                                <form class="mt-4" action="index.html">
+                                    <div class="form-group">
+                                        <label>اسم</label>
+                                        <input type="text" class="form-control mb-0" id="exampleInputl2" placeholder="اسمت را وارد کن" autocomplete="off" required="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>تاریخ تولد</label>
+                                        <input type="text" class="form-control date-input basicFlatpickr mb-0" placeholder="تاریخ را انتخاب کنید" id="exampleInputPassword2" required="">
+                                    </div>
+                                    <div class="form-group d-flex flex-md-row flex-column" data-select2-id="15">
+                                        <div class="iq-custom-select d-inline-block manage-gen">
+                                            <select name="cars" class="form-control pro-dropdown select2-hidden-accessible" data-select2-id="1" tabindex="-1" aria-hidden="true">
+                                                <option value="female" data-select2-id="3">زن</option>
+                                                <option value="male">مرد</option>
+                                            </select><span class="select2 select2-container select2-container--bootstrap4" dir="rtl" data-select2-id="2" style="width: 64px;"><span class="selection"><span class="select2-selection select2-selection--single" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="0" aria-labelledby="select2-cars-9f-container"><span class="select2-selection__rendered" id="select2-cars-9f-container" role="textbox" aria-readonly="true" title="زن">زن</span><span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <a href="#" class="btn btn-hover">ذخیره</a>
+                                        <a href="#" class="btn btn-link">لغو</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

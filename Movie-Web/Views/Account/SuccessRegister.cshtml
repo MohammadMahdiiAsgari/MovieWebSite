@@ -1,0 +1,24 @@
+﻿@model RegisterDTO
+    <section class="sign-in-page">
+        <div class="container">
+            <div class="row justify-content-center align-items-center height-self-center">
+                <div class="col-lg-7 col-md-12 align-self-center">
+                    <div class="sign-user_card ">
+                        <div class="sign-in-page-data">
+                            <div class="alert alert-success">
+                                <h2 style="color:#155724">@Model.UserName عزیز!</h2>
+                                <p>باتشکر از ثبت نام شما در سایت :)</p>
+                            <a asp-controller="Account" asp-action="Login" class="btn btn-home">بازگشت به صفحه اصلی</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+

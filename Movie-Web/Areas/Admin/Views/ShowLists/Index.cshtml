@@ -1,0 +1,129 @@
+﻿@model IEnumerable<Movie.Domain.Models.TVShows.ShowLists>
+
+@{
+    ViewData["Title"] = "لیست نمایش‌ها";
+}
+
+<h1>لیست نمایش‌ها</h1>
+
+<p>
+    <a class="btn btn-success" asp-action="Create">افزودن نمایش جدید</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShowName)
+            </th>
+            <th>
+                زیرگروه‌ها
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Language)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ContentRating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Duration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModifiedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDeleted)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                    @{
+                        string imageUrl = ""; // متغیری برای ذخیره مسیر URL عکس
+                        string defaultImageFileName = "noimage.jpeg";
+
+                        string imageFolderPath = "/ShowImages/";
+
+                        // بررسی می کنیم آیا خصوصیت ImageName مقدار دارد و برابر با نام عکس پیش فرض نیست
+                        if (!string.IsNullOrEmpty(item.ImageName) && item.ImageName != defaultImageFileName) // TODO: "noimage.jpeg" را با نام فایل پیش فرض خود جایگزین کنید
+                        {
+                            // اگر نام عکس آپلود شده داریم، مسیر کامل URL را می سازیم
+                            // فرض می کنیم عکس ها در wwwroot/images/showcovers ذخیره می شوند
+                            imageUrl = imageFolderPath + item.ImageName; // 👇👇👇 مسیر پوشه عکس ها در wwwroot 👇👇👇
+                            // TODO: "images/showcovers" را با مسیر واقعی پوشه عکس های کاور نمایش ها در wwwroot جایگزین کنید
+                        }
+                        else
+                        {
+                            // اگر نام عکس خالی است یا برابر با نام عکس پیش فرض است
+                            imageUrl = imageFolderPath + defaultImageFileName;// 👇👇👇 مسیر عکس پیش فرض در wwwroot 👇👇👇
+                            // TODO: "images/showcovers/noimage.jpeg" را با مسیر واقعی عکس پیش فرض جایگزین کنید
+                        }
+                    }
+                    @* استفاده از تگ img با مسیر URL عکس بدست آمده *@
+                    <img src="@imageUrl" alt="کاور نمایش" style="width: 150px; height: auto;" /> @* تنظیم استایل دلخواه برای اندازه عکس *@
+                    @* 👇👇👇 پایان منطق نمایش عکس 👇👇👇 *@
+@*                     <img src="/ShowImages/@item.ImageName" style="max-width:140px" class="img-thumbnail" /> *@
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ShowName)
+            </td>
+            <td>
+                    @* 👇👇👇 نمایش لیست زیرگروه های مرتبط با این نمایش 👇👇👇 *@
+                    @if (item.ShowListTVShowsSubGroups != null && item.ShowListTVShowsSubGroups.Any())
+                    {
+                        // حلقه روی لیست ارتباطات با زیرگروه ها برای این نمایش
+                        foreach (var showSubGroup in item.ShowListTVShowsSubGroups)
+                        {
+                            // دسترسی به موجودیت TVShowsSubGroup واقعی از طریق خصوصیت Navigation
+                            @showSubGroup.TVShowsSubGroup?.SubGroupTitle
+                            // نمایش عنوان زیرگروه
+                            <br /> @* برای نمایش هر زیرگروه در خط جدید *@
+                        }
+                    }
+                    else
+                    {
+                        // اگر هیچ زیرگروهی مرتبط نیست
+                        <span>-</span>
+                    }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Language)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ContentRating)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Duration)
+            </td>
+            <td>
+                @item.CreateDate.ToShamsi()
+            </td>
+            <td>
+                @item.ModifiedDate?.ToShamsi()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsDeleted)
+            </td>
+            <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">ویرایش</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">جزئیات</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">حذف</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

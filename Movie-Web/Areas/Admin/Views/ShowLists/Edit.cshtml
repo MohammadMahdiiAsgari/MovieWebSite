@@ -1,0 +1,149 @@
+﻿@using Movie_Web.Areas.Admin.ViewModels
+@model ShowFormViewModel
+
+@{
+    ViewData["Title"] = "ویرایش نمایش";
+}
+
+<h1>ویرایش نمایش</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @* 👇👇👇 فیلد مخفی برای ارسال شناسه نمایش مورد ویرایش 👇👇👇 *@
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="CoverImage" class="control-label"></label>
+                @* Input برای آپلود عکس جدید *@
+                <input asp-for="CoverImage" class="form-control" id="coverImageInput" type="file" accept="image/*" />
+                <span asp-validation-for="CoverImage" class="text-danger"></span>
+                @* 👇👇👇 تگ img برای نمایش عکس فعلی یا پیش نمایش عکس جدید 👇👇👇 *@
+                @{
+                    string currentImageUrl = "";
+                    string defaultImageFileName = "noimage.jpeg"; // نام دقیق فایل عکس پیش فرض شما
+                    string imageFolderPath = "/ShowImages/"; // مسیر دقیق پوشه ذخیره عکس ها در wwwroot
+
+                    // تعیین مسیر عکس فعلی برای نمایش اولیه در تگ img
+                    if (!string.IsNullOrEmpty(Model.CurrentImageName) && Model.CurrentImageName != defaultImageFileName)
+                    {
+                        currentImageUrl = imageFolderPath + Model.CurrentImageName;
+                    }
+                    else
+                    {
+                        currentImageUrl = imageFolderPath + defaultImageFileName;
+                    }
+                }
+                @* محاسبه استایل display: none; یا display: block; بر اساس وجود عکس فعلی *@
+                @{
+                    string displayStyle = (string.IsNullOrEmpty(Model.CurrentImageName) || Model.CurrentImageName == defaultImageFileName) ? "display: none;" : "display: block;";
+                }
+
+                @* استفاده از تگ img با مسیر URL عکس بدست آمده و استفاده از متغیر displayStyle *@
+                <img id="coverImagePreview" src="@currentImageUrl" alt="کاور نمایش" style="max-width: 150px; height: auto; margin-top: 10px; @displayStyle" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ShowName" class="control-label"></label>
+                <input asp-for="ShowName" class="form-control" />
+                <span asp-validation-for="ShowName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Genre" class="control-label"></label>
+                <input asp-for="Genre" class="form-control" />
+                <span asp-validation-for="Genre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Language" class="control-label"></label>
+                <input asp-for="Language" class="form-control" />
+                <span asp-validation-for="Language" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContentRating" class="control-label"></label>
+                <input asp-for="ContentRating" class="form-control" />
+                <span asp-validation-for="ContentRating" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReleaseDate" class="control-label"></label>
+                <input asp-for="ReleaseDate" class="form-control" />
+                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AverageEpisodeDuration" class="control-label"></label>
+                <input asp-for="AverageEpisodeDuration" class="form-control" />
+                <span asp-validation-for="AverageEpisodeDuration" class="text-danger"></span>
+            </div>
+            @* === فیلد انتخاب زیرگروه ها (رابطه Many-to-Many) === *@
+            <div class="form-group">
+                <label asp-for="SelectedSubGroupIds" class="control-label"></label>
+                @* Dropdown چند انتخابی. با پر شدن AvailableSubGroups و تنظیم خصوصیت Selected در GET Edit، زیرگروه های فعلی انتخاب شده نمایش داده می شوند. *@
+                <select asp-for="SelectedSubGroupIds" class="form-control" asp-items="Model.AvailableSubGroups" multiple>
+                    @* گزینه ها به صورت خودکار توسط asp-items ایجاد می شوند *@
+                </select>
+                <span asp-validation-for="SelectedSubGroupIds" class="text-danger"></span>
+                <small class="form-text text-muted">با نگه داشتن کلید Ctrl یا Command (در مک) می‌توانید چند گزینه را انتخاب کنید.</small>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="ذخیره تغییرات" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">بازگشت به لیست</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @* TODO: اگر از CKEditor برای Description استفاده می کنید، کد آن را اینجا اضافه کنید *@
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace( 'Description' );
+    </script>
+
+    @* 👇👇👇 کد JavaScript برای پیش نمایش عکس (اصلاح شده برای نمایش عکس فعلی) 👇👇👇 *@
+    <script>
+        // گرفتن ارجاع به ورودی فایل و تگ img پیش نمایش
+        const coverImageInput = document.getElementById('coverImageInput');
+        const coverImagePreview = document.getElementById('coverImagePreview');
+        // 👇👇👇 ذخیره مسیر URL عکس اصلی نمایش در زمان بارگذاری صفحه 👇👇👇
+        const originalImageUrl = coverImagePreview.src;
+
+        // اضافه کردن Event Listener برای گوش دادن به تغییرات در ورودی فایل
+        coverImageInput.addEventListener('change', function(event) {
+            if (event.target.files && event.target.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    coverImagePreview.src = e.target.result;
+                    coverImagePreview.style.display = 'block'; // مطمئن می شویم که نمایش داده می شود
+                }
+
+                reader.readAsDataURL(event.target.files[0]);
+            } else {
+                //  👇👇👇 اگر انتخاب فایل لغو شد (فایلی انتخاب نشد): بازگشت به عکس اصلی 👇👇👇
+                coverImagePreview.src = originalImageUrl; // تنظیم src به مسیر URL عکس اصلی که ذخیره کرده بودیم
+
+                // نکته: وضعیت display تگ img (بلاک یا نان) قبلا در کد Razor بر اساس وجود عکس اصلی تنظیم شده است.
+                // با بازگرداندن src به originalImageUrl، اگر عکس اصلی وجود داشت، نمایش داده خواهد شد.
+                // اگر عکس اصلی وجود نداشت (src اصلی به عکس پیش فرض اشاره می کرد و تگ img در ابتدا display: none بود)،
+                // با بازگرداندن src به آن، تگ img پنهان خواهد ماند که رفتار صحیح است.
+            }
+        });
+
+        // نکته: در فرم Edit، تگ img پیش نمایش در ابتدا عکس فعلی را نمایش می دهد.
+        // کد JavaScript فقط زمانی اجرا می شود که کاربر فایل جدیدی را انتخاب کند.
+    </script>
+
+}

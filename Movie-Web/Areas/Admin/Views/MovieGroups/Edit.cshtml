@@ -1,0 +1,92 @@
+﻿@using Movie.Domain.Models.Movies
+@model MovieGroup
+
+@{
+    ViewData["Title"] = "ویرایش گروه";
+    var subGroups = (List<MovieSubGroup>)ViewBag.SubGroup;
+}
+
+<h1>ویرایش گروه</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="GroupTitle" class="control-label"></label>
+                <input asp-for="GroupTitle" class="form-control" />
+                <span asp-validation-for="GroupTitle" class="text-danger"></span>
+            </div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreateDate" />
+
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsDeleted" /> @Html.DisplayNameFor(model => model.IsDeleted)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="ویرایش" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div>
+        <form class="col-10" asp-action="CreateSubGroup" method="post">
+            <input type="hidden" name="subgroupId" value="@ViewBag.SubGroupId" />
+            <input type="hidden" name="groupId" value="@Model.Id" />
+            <div class="col-3" style="padding-bottom:5px">
+                <span>عنوان زیر گروه :</span>
+            </div>
+            <div class="col-7">
+                <input type="text" name="name" value="@ViewBag.SubTitle" class="form-control" />
+            </div>
+            <div class="col-2" style="padding-top:5px">
+                <input type="submit" value="ذخیره" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+    <table class="table table-bordered" style="padding-top:5px">
+        <thead>
+            <tr>
+                <th>عنوان زیر گروه:</th>
+                <th>دستورات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in subGroups)
+            {
+                <tr style="@((item.IsDeleted)?"color: red;":"")">
+                    <td>@item.SubGroupTitle</td>
+                    <td>
+                        <a class="btn btn-warning" asp-action="EditSubGroup" asp-route-id="@item.Id">
+                            ویرایش
+                        </a>
+                        <a class="btn @((item.IsDeleted)?"btn-info":"btn-danger")" asp-action="DeleteSubGroup" asp-route-id="@item.Id">
+                            @if (item.IsDeleted)
+                            {
+                                <text>بازگردانی</text>
+                            }
+                            else
+                            {
+                                <text>حذف</text>
+                            }
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div>
+    <a asp-action="Index">بازگشت</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

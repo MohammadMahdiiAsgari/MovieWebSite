@@ -1,0 +1,79 @@
+﻿@using Movie_Web.Components
+@model MoviesBySubGroupViewModel // مدل این View، ViewModel جدید است
+
+@*
+    این View مسئول نمایش یک بخش کامل شامل عنوان زیرگروه و لیست فیلم‌های آن است.
+*@
+
+@if (Model != null && Model.Movies != null && Model.Movies.Any()) // بررسی می‌کنیم که ViewModel و لیست فیلم‌ها خالی نیستند
+{
+    // این div ها و کلاس‌ها مربوط به ساختار کلی بخش در قالب شما هستند.
+    // ما از HTML ارسالی شما استفاده می‌کنیم و داده‌ها را در آن قرار می‌دهیم.
+    <section id="iq-favorites">
+        @* شاید بهتر باشد id را دینامیک کنید یا کلا این سکشن را در ویو اصلی بگذارید *@
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12 overflow-hidden">
+                    <div class="iq-main-header d-flex align-items-center justify-content-between">
+                        <h4 class="main-title">@Model.SubGroupTitle</h4>
+                        <a class="iq-view-all" href="movie-category.html">مشاهده همه</a> @* TODO: اگر ViewAllLink در ViewModel دارید، از آن استفاده کنید *@
+                    </div>
+
+                    <div class="favorites-contens">
+                        <ul class="favorites-slider list-inline row p-0 mb-0 iq-rtl-direction">
+                            @* حالا روی لیست فیلم‌ها در ViewModel حلقه می‌زنیم *@
+                            @foreach (var movie in Model.Movies)
+                            {
+                                // HTML مربوط به یک آیتم فیلم (یک li.slide-item) از کد قالب شما.
+                                // داده‌های دینامیک را با استفاده از مدل movie (که از Model.Movies می‌آید) قرار می‌دهیم.
+                                <li class="slide-item">
+                                    <div class="block-images position-relative">
+                                        <div class="img-box">
+                                            <img src=/MovieImages/@movie.ImageName class="img-fluid" alt="@movie.Title"> @* مسیر عکس را تنظیم کنید *@
+                                        </div>
+                                        <div class="block-description">
+                                            <h6 class="iq-title"><a href="/movies/details/@movie.Id">@movie.Title</a></h6> @* مسیر لینک جزئیات را تنظیم کنید *@
+                                            <div class="movie-time d-flex align-items-center my-2 iq-ltr-direction">
+                                                @* {{-- نمایش اطلاعات سن مجاز، مدت زمان، فصل/قسمت از مدل movie --}} *@
+                                                <div class="badge badge-secondary p-1 mr-2">+13</div> @* از خصوصیت واقعی مدل استفاده کنید *@
+                                                <span class="text-white">@movie.Duration دقیقه</span> @* TODO: این را با داده واقعی از مدل خود جایگزین کنید *@
+                                            </div>
+                                            <div class="hover-buttons">
+                                                <a href="/movies/play/@movie.Id" role="button" class="btn btn-hover iq-button">
+                                                    @* مسیر لینک پخش را تنظیم کنید *@
+                                                    <i class="fa fa-play mr-1" aria-hidden="true"></i>
+                                                    تماشا کردن
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        @* {{-- بخش اطلاعات اجتماعی - داده‌ها را در صورت وجود در مدل movie نمایش دهید --}} *@
+                                        <div class="block-social-info">
+                                            <ul class="list-inline p-0 m-0 music-play-lists">
+                                                <li class="share">
+                                                    <span><i class="ri-share-fill"></i></span>
+                                                    <div class="share-box">
+                                                        <div class="d-flex align-items-center">
+                                                            <a href="https://www.facebook.com/sharer?u=@Context.Request.Scheme://@Context.Request.Host/movies/details/@movie.Id" target="_blank" rel="noopener noreferrer" class="share-ico" tabindex="0"><i class="ri-facebook-fill"></i></a>
+                                                            <a href="https://twitter.com/intent/tweet?text=@movie.Title&url=@Context.Request.Scheme://@Context.Request.Host/movies/details/@movie.Id" target="_blank" rel="noopener noreferrer" class="share-ico" tabindex="0"><i class="ri-twitter-fill"></i></a>
+                                                            <a href="#" data-link="@Context.Request.Scheme://@Context.Request.Host/movies/details/@movie.Id" class="share-ico iq-copy-link" tabindex="0"><i class="ri-links-fill"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <span><i class="ri-heart-fill"></i></span>
+                                                    <span class="count-box">19+</span> @* TODO: این را با داده واقعی جایگزین کنید *@
+                                                </li>
+                                                <li><span><i class="ri-add-line"></i></span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}

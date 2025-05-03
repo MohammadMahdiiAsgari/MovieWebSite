@@ -1,0 +1,121 @@
+﻿@model Movie.Domain.Models.Movies.Movies
+
+@{
+    ViewData["Title"] = "افزودن فیلم جدید";
+}
+
+<h1>افزودن فیلم جدید</h1>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group ">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                    <label asp-for="GroupId" class="control-label"></label>
+                <select id="GroupId" asp-for="GroupId" class="form-control" asp-items="ViewBag.GroupId"
+                    onchange="loadSubGroup()"></select>
+                </div>
+            <div class="form-group col-md-6" id="subs">
+                    <label asp-for="SubGroupId" class="control-label"></label>
+                    <select asp-for="SubGroupId" class="form-control" asp-items="ViewBag.SubGroupId"></select>
+                </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Language" class="control-label"></label>
+                <input asp-for="Language" class="form-control" />
+                <span asp-validation-for="Language" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Genres" class="control-label"></label>
+                <input asp-for="Genres" class="form-control" />
+                <span asp-validation-for="Genres" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Duration" class="control-label"></label>
+                <input asp-for="Duration" class="form-control" />
+                <span asp-validation-for="Duration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContentRating" class="control-label"></label>
+                <input asp-for="ContentRating" class="form-control" />
+                <span asp-validation-for="ContentRating" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PubliceDate" class="control-label"></label>
+                <input asp-for="PubliceDate" class="form-control" />
+                <span asp-validation-for="PubliceDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Quality" class="control-label"></label>
+                <input asp-for="Quality" class="form-control" />
+                <span asp-validation-for="Quality" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageName" class="control-label"></label>
+                <input type="file" name="ImgUpload" id=" ImgUpload" onchange="ImgPre(this)" />
+                <br />
+                <img style="max-width:150px" id="ImgPreview" />
+                <span asp-validation-for="ImageName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <fieldset>
+                    <legend>گالری تصاویر </legend>
+                    <input type="file" name="ImgGalleries" multiple />
+                </fieldset>
+            </div>
+            <div class="form-group">
+                <label asp-for="Tags" class="control-label"></label>
+                <input asp-for="Tags" class="form-control" />
+                <span asp-validation-for="Tags" class="text-danger"></span>
+            </div>
+
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsDeleted" /> @Html.DisplayNameFor(model => model.IsDeleted)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="ثبت" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">بازگشت به لیست</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace( 'Description' );
+    </script>
+    <script>
+        function ImgPre(input) {
+          if (input.files[0]) {
+            var uploadimg = new FileReader();
+            uploadimg.onload = function(displayimg) {
+              $("#ImgPreview").attr('src', displayimg.target.result);
+            }
+            uploadimg.readAsDataURL(input.files[0]);
+          }
+        }
+
+        function loadSubGroup(){
+            $("#subs").load("/Admin/Movies/GetSubGroup?groupId="+$("#GroupId").val());
+        }
+    </script>
+
+}

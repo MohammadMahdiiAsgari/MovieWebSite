@@ -1,0 +1,95 @@
+﻿@model IEnumerable<Movie.Domain.Models.TVShows.Episodes>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageNameForEpisode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EpisodeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EpisodeDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EpisodeNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EpisodeContentRating)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReleaseDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EpisodeDuration)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Season)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModifiedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDeleted)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ImageNameForEpisode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EpisodeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EpisodeDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EpisodeNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EpisodeContentRating)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EpisodeDuration)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Season.SeasonDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModifiedDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsDeleted)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

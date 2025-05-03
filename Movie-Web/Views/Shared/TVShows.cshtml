@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "TV Shows";
+}
+   <!-- Slider Start -->
+   <section class="iq-main-slider p-0">
+      <div id="tvshows-slider" class="iq-rtl-direction">
+         <div>
+            <a href="show-details.html">
+               <div class="shows-img">
+                  <img src=" images/shows-banner/show-1.jpg" class="w-100" alt="">
+                  <div class="shows-content">
+                     <h4 class="text-white mb-1">The Hero Camp</h4>
+                     <div class="movie-time d-flex align-items-center">
+                        <div class="badge badge-secondary p-1 mr-2">18+</div>
+                        <span class="text-white">3 فصل</span>
+                     </div>
+                  </div>
+               </div>
+            </a>
+         </div>
+         <div>
+            <a href="show-details.html">
+               <div class="shows-img">
+                  <img src=" images/shows-banner/show-2.jpg" class="w-100" alt="">
+                  <div class="shows-content">
+                     <h4 class="text-white mb-1">The Appartment</h4>
+                     <div class="movie-time d-flex align-items-center">
+                        <div class="badge badge-secondary p-1 mr-2">17+</div>
+                        <span class="text-white">3 فصل</span>
+                     </div>
+                  </div>
+               </div>
+            </a>
+         </div>
+         <div>
+            <a href="show-details.html">
+               <div class="shows-img">
+                  <img src=" images/shows-banner/show-3.jpg" class="w-100" alt="">
+                  <div class="shows-content">
+                     <h4 class="text-white mb-1">The Marshal King</h4>
+                     <div class="movie-time d-flex align-items-center">
+                        <div class="badge badge-secondary p-1 mr-2">11+</div>
+                        <span class="text-white">3 فصل</span>
+                     </div>
+                  </div>
+               </div>
+            </a>
+         </div>         
+      </div>
+      <div class="dropdown genres-box">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+           ژانرها
+        </button>
+        <div class="dropdown-menu three-column" aria-labelledby="dropdownMenuButton">
+           <a class="dropdown-item" href="#">هندی</a>
+           <a class="dropdown-item" href="#">تامیل</a>
+           <a class="dropdown-item" href="#">پنجابی</a>
+           <a class="dropdown-item" href="#">انگلیسی</a>
+           <a class="dropdown-item" href="#">کمدی</a>
+           <a class="dropdown-item" href="#">اکشن</a>
+           <a class="dropdown-item" href="#">داستان عاشقانه</a>
+           <a class="dropdown-item" href="#">درام ها</a>
+           <a class="dropdown-item" href="#">بالیوود</a>
+           <a class="dropdown-item" href="#">هالیوود</a>
+           <a class="dropdown-item" href="#">کودکان و خانواده</a>
+           <a class="dropdown-item" href="#">برنده جایزه</a>
+        </div>
+     </div>
+   </section>
+   <!-- Slider End -->
+   <!-- MainContent -->
+   <div class="main-content">
+    @await Component.InvokeAsync("TVShowsGroups")
+   </div>
+  

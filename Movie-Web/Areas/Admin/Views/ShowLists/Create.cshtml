@@ -1,0 +1,120 @@
+﻿@using Movie_Web.Areas.Admin.ViewModels
+@model ShowFormViewModel
+
+@{
+    ViewData["Title"] = "افزودن نمایش جدید";
+}
+
+<h1>افزودن نمایش جدید</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" enctype="multipart/form-data" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SelectedSubGroupIds" class="control-label"></label>
+                @*
+                    استفاده از تگ select با خصوصیت multiple برای انتخاب چندگانه.
+                    asp-for="SelectedSubGroupIds" این کنترل را به خصوصیت SelectedSubGroupIds در ViewModel متصل می کند.
+                    asp-items="Model.AvailableSubGroups" لیست گزینه ها را از خصوصیت AvailableSubGroups در ViewModel می گیرد.
+                *@
+                <select asp-for="SelectedSubGroupIds" class="form-control" asp-items="Model.AvailableSubGroups" multiple>
+                    @* گزینه ها به صورت خودکار توسط asp-items ایجاد می شوند *@
+                </select>
+                <span asp-validation-for="SelectedSubGroupIds" class="text-danger"></span>
+                <small class="form-text text-muted">با نگه داشتن کلید Ctrl یا Command (در مک) می‌توانید چند گزینه را انتخاب کنید.</small> @* راهنمایی برای کاربر *@
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="ShowName" class="control-label"></label>
+                <input asp-for="ShowName" class="form-control" />
+                <span asp-validation-for="ShowName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Genre" class="control-label"></label>
+                <input asp-for="Genre" class="form-control" />
+                <span asp-validation-for="Genre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Language" class="control-label"></label>
+                <input asp-for="Language" class="form-control" />
+                <span asp-validation-for="Language" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ContentRating" class="control-label"></label>
+                <input asp-for="ContentRating" class="form-control" />
+                <span asp-validation-for="ContentRating" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AverageEpisodeDuration" class="control-label"></label>
+                <input asp-for="AverageEpisodeDuration" class="form-control" />
+                <span asp-validation-for="AverageEpisodeDuration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReleaseDate" class="control-label"></label>
+                <input asp-for="ReleaseDate" class="form-control" />
+                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CoverImage " class="control-label"></label>
+                <input asp-for="CoverImage " class="form-control" type="file" id="coverImageInput" onchange="ImgPre(this)" />
+                <br />
+                <img style="max-width: 150px; height: auto; margin-top: 10px; display: none;" id="coverImagePreview" />
+                <span asp-validation-for="CoverImage " class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="افزودن" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">بازگشت به لیست</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+    <script>
+        CKEDITOR.replace( 'Description' );
+    </script>
+
+    <script>
+        // گرفتن ارجاع به ورودی فایل و تگ img پیش نمایش
+        const coverImageInput = document.getElementById('coverImageInput');
+        const coverImagePreview = document.getElementById('coverImagePreview');
+
+        // اضافه کردن Event Listener برای گوش دادن به تغییرات در ورودی فایل
+        coverImageInput.addEventListener('change', function(event) {
+            // بررسی می کنیم آیا فایلی انتخاب شده است
+            if (event.target.files && event.target.files[0]) {
+                const reader = new FileReader(); // ایجاد یک نمونه FileReader
+
+                // زمانی که فایل خوانده شد، این تابع اجرا می شود
+                reader.onload = function(e) {
+                    // خصوصیت src تگ img پیش نمایش را با داده فایل تنظیم می کنیم
+                    coverImagePreview.src = e.target.result;
+                    // تگ img را نمایش می دهیم (اگر قبلا مخفی بود)
+                    coverImagePreview.style.display = 'block';
+                }
+
+                // خواندن فایل انتخاب شده به صورت Data URL
+                reader.readAsDataURL(event.target.files[0]);
+            } else {
+                // اگر فایلی انتخاب نشده بود، تگ img را مخفی می کنیم
+                coverImagePreview.src = '#'; // ریست کردن src
+                coverImagePreview.style.display = 'none';
+            }
+        });
+    </script>
+}
+
+
+

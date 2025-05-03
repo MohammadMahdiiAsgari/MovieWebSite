@@ -1,0 +1,55 @@
+﻿@using Movie.Domain.Models.TVShows
+@model IEnumerable<TVShowsGroup>
+
+@{
+    ViewData["Title"] = "لیست گروه‌ها";
+}
+
+<h1>لیست گروه‌‌ها</h1>
+
+<p>
+    <a class="btn btn-success" asp-action="Create">افزودن گروه جدید</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GroupTitle)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModifiedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDeleted)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GroupTitle)
+                </td>
+                <td>
+                    @item.CreateDate.ToShamsi()
+                </td>
+                <td>
+                    @item.ModifiedDate?.ToShamsi()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsDeleted)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">ویرایش</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">جزئیات</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">حذف</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
