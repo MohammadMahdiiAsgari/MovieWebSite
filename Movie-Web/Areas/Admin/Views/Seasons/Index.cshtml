@@ -1,14 +1,17 @@
 ﻿@model IEnumerable<Movie.Domain.Models.TVShows.Seasons>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = $"فصل های نمایش {ViewBag.ParentShowName}";
 }
 
-<h1>Index</h1>
+<h1>فصل های نمایش "@ViewBag.ParentShowName"</h1> @* نمایش نام نمایش والد در عنوان صفحه *@
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @* 👇👇👇 لینک اضافه کردن فصل جدید برای این نمایش والد 👇👇👇 *@
+    @* باید showId نمایش والد را به اکشن Create ارسال کنیم تا فصل جدید به آن مرتبط شود *@
+    <a asp-action="Create" asp-route-showId="@ViewBag.ParentShowId">افزودن فصل جدید</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>

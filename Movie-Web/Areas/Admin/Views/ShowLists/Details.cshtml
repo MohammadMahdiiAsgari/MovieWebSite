@@ -1,84 +1,123 @@
 ﻿@model Movie.Domain.Models.TVShows.ShowLists
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "جزئیات نمایش";
 }
 
-<h1>Details</h1>
+<h1>جزئیات نمایش</h1>
 
 <div>
-    <h4>ShowLists</h4>
+    <h4>@Model.ShowName</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ImageName)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageName)
+        <dd class="col-sm-10">
+            @{
+                string imageUrl = "";
+                string defaultImageFileName = "noimage.jpeg"; // نام دقیق فایل عکس پیش فرض شما
+                string imageFolderPath = "/ShowImages/"; // مسیر دقیق پوشه ذخیره عکس ها در wwwroot
+
+                // تعیین مسیر URL عکس برای نمایش
+                if (!string.IsNullOrEmpty(Model.ImageName) && Model.ImageName != defaultImageFileName)
+                {
+                    imageUrl = imageFolderPath + Model.ImageName;
+                }
+                else
+                {
+                    imageUrl = imageFolderPath + defaultImageFileName;
+                }
+            }
+            <img src="@imageUrl" alt="کاور نمایش" style="max-width: 150px; height: auto;" /> @* نمایش عکس *@
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ShowName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ShowName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Description)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
+        <dd class="col-sm-10">
+            @* 👇👇👇 استفاده از Html.Raw() برای نمایش HTML بدون Encoding 👇👇👇 *@
+            @Html.Raw(Model.Description)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Genre)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Genre)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Language)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Language)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ContentRating)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ContentRating)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ReleaseDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ReleaseDate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Duration)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Duration)
         </dd>
-        <dt class = "col-sm-2">
+        @* === نمایش زیرگروه های مرتبط === *@
+        <dt class="col-sm-2">
+            زیرگروه‌ها @* عنوان ثابت برای زیرگروه ها *@
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.ShowListTVShowsSubGroups != null && Model.ShowListTVShowsSubGroups.Any())
+            {
+                // حلقه روی لیست ارتباطات با زیرگروه ها برای این نمایش
+                foreach (var showSubGroup in Model.ShowListTVShowsSubGroups)
+                {
+                    // دسترسی به موجودیت TVShowsSubGroup واقعی از طریق خصوصیت Navigation
+                    @showSubGroup.TVShowsSubGroup?.SubGroupTitle
+                    // نمایش عنوان زیرگروه
+                    <br /> @* برای نمایش هر زیرگروه در خط جدید *@
+                }
+            }
+            else
+            {
+                // اگر هیچ زیرگروهی مرتبط نیست
+                <span>-</span>
+            }
+        </dd>
+        @* TODO: اگر خصوصیات CreateDate, ModifiedDate, IsDeleted را می خواهید نمایش دهید (به صورت فقط خواندنی)*@
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CreateDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CreateDate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ModifiedDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.ModifiedDate)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.IsDeleted)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.IsDeleted)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">ویرایش</a> |
+    <a asp-action="Index">بازگشت به لیست</a>
 </div>

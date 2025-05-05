@@ -21,10 +21,32 @@ namespace Movie_Web.Areas.Admin.Controllers
         }
 
         // GET: Admin/Seasons
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int showId) // دریافت شناسه نمایش والد
         {
-            var myMovieContext = _context.Seasons.Include(s => s.ShowLists);
-            return View(await myMovieContext.ToListAsync());
+            // 1. واکشی نمایش والد (ShowLists) برای نمایش اطلاعات آن در صفحه لیست فصل ها (اختیاری)
+            var parentShow = await _context.ShowLists
+                                           .FirstOrDefaultAsync(s => s.Id == showId && !s.IsDeleted);
+
+            if (parentShow == null)
+            {
+                // اگر نمایش والد پیدا نشد یا حذف شده بود
+                return NotFound(); // یا Redirect به صفحه لیست نمایش ها با پیام خطا
+            }
+
+            // 2. واکشی لیست فصل های مربوط به این نمایش والد
+            // نیازی به Include کردن روابط در این مرحله نیست مگر اینکه در لیست فصل ها اطلاعات مرتبط (مثل تعداد قسمت ها) را نمایش دهید.
+            var seasons = await _context.Seasons // DbSet برای مدل Season
+                                       .Where(s => s.ShowId == showId && !s.IsDeleted) // فیلتر بر اساس شناسه نمایش والد (ShowId) و وضعیت حذف شده
+                                        .OrderBy(s => s.SeasonNumber) // مرتب سازی فصل ها بر اساس شماره فصل
+                                        .ToListAsync();
+
+            // 3. ارسال لیست فصل ها و اطلاعات نمایش والد به View
+            // می توانید یک ViewModel سفارشی برای این صفحه بسازید که شامل اطلاعات نمایش والد و لیست فصل ها باشد.
+            // برای سادگی فعلا فقط لیست فصل ها را ارسال می کنیم و نام نمایش والد را از ViewData/ViewBag پاس می دهیم.
+            ViewBag.ParentShowName = parentShow.ShowName; // پاس دادن نام نمایش والد به View
+            ViewBag.ParentShowId = showId; // پاس دادن شناسه نمایش والد به View
+
+            return View(seasons); // ارسال لیست فصل ها به View Season/Index.cshtml
         }
 
         // GET: Admin/Seasons/Details/5

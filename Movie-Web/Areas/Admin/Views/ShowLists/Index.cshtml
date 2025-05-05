@@ -121,7 +121,18 @@
             <td>
                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">ویرایش</a> |
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">جزئیات</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">حذف</a>
+                    @* 👇👇👇 فرم و دکمه برای Toggle Delete Status 👇👇👇 *@
+                    <form asp-action="ToggleDeleteStatus" method="post" style="display:inline;">
+                        @* فرم کوچک برای ارسال POST *@
+                        <input type="hidden" name="id" value="@item.Id" /> @* ارسال شناسه نمایش به اکشن متد POST *@
+                        @* متن دکمه را بر اساس وضعیت فعلی IsDeleted نمایش تغییر می دهیم *@
+                        <button type="submit" class="btn btn-sm @(item.IsDeleted ? "btn-success" : "btn-danger")">
+                            @(item.IsDeleted ? "بازیابی" : "حذف") @* متن دکمه "بازیابی" اگر حذف شده، "حذف" اگر حذف نشده *@
+                        </button>
+                        @Html.AntiForgeryToken() @* برای ValidateAntiForgeryToken در اکشن متد POST نیاز است *@
+                    </form>
+                    @* 👇👇👇 پایان فرم و دکمه Toggle Delete Status 👇👇👇 *@
+                    
             </td>
         </tr>
 }

@@ -32,8 +32,8 @@ namespace Movie_Web.Areas.Admin.Controllers
             // واکشی تمام نمایش ها از دیتابیس
             // 👇👇👇 Include کردن اطلاعات زیرگروه های مرتبط 👇👇👇
             var movieDbContext = _context.ShowLists // DbSet برای مدل ShowLists
-                                        .Include("ShowListTVShowsSubGroups.TVShowsSubGroup") // Include کردن خصوصیت Navigation به لیست مدل واسط در ShowLists
-                                        .Where(s => !s.IsDeleted); // فیلتر کردن نمایش های حذف شده (اگر منطق حذف منطقی دارید)
+                                        .Include("ShowListTVShowsSubGroups.TVShowsSubGroup"); // Include کردن خصوصیت Navigation به لیست مدل واسط در ShowLists
+                                        
 
             return View(await movieDbContext.ToListAsync());
         }
@@ -47,6 +47,7 @@ namespace Movie_Web.Areas.Admin.Controllers
             }
 
             var showLists = await _context.ShowLists
+                .Include("ShowListTVShowsSubGroups.TVShowsSubGroup") // مسیر خصوصیت های Navigation به صورت رشته
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (showLists == null)
             {
@@ -399,7 +400,7 @@ namespace Movie_Web.Areas.Admin.Controllers
             }
 
             var showLists = await _context.ShowLists
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id && !m.IsDeleted); // پیدا کردن نمایش بر اساس شناسه و فیلتر حذف نشده ها
             if (showLists == null)
             {
                 return NotFound();
@@ -413,13 +414,81 @@ namespace Movie_Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var showLists = await _context.ShowLists.FindAsync(id);
-            if (showLists != null)
+            var showLists = await _context.ShowLists
+                .FirstOrDefaultAsync(m => m.Id == id); // پیدا کردن نمایش بر اساس شناسه
+            if (showLists == null)
             {
-                _context.ShowLists.Remove(showLists);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
+            // 3. انجام حذف منطقی (Soft Delete)
+            showLists.IsDeleted = true; // تنظیم خصوصیت IsDeleted به true
+            showLists.ModifiedDate = DateTime.Now; // به‌روزرسانی تاریخ ویرایش
+
+            // 4. اعلام به DbContext که مدل تغییر کرده است (برای اطمینان، هرچند EF Core معمولا تغییر در موجودیت ردیابی شده را تشخیص می دهد)
+            _context.Update(showLists); // یا _context.Entry(showLists).State = EntityState.Modified;
+
+            // 5. ذخیره تغییر در دیتابیس
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO: مدیریت خطا در زمان ذخیره حذف
+                Console.WriteLine($"Error during soft delete: {ex.Message}");
+                // می توانید به صفحه خطا هدایت کنید یا پیام خطا در صفحه لیست نمایش دهید
+                ModelState.AddModelError("", "خطا در حذف نمایش.");
+                // اگر می خواهید پیام خطا در صفحه لیست نمایش داده شود، نیاز به Pass کردن خطا به View دارید
+                return RedirectToAction(nameof(Index)); // فعلا فقط به صفحه لیست هدایت می کنیم
+            }
+
+
+            // 6. هدایت کاربر به صفحه لیست نمایش ها پس از حذف موفق
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost] // این اکشن فقط درخواست های POST را مدیریت می کند
+        [ValidateAntiForgeryToken] // برای امنیت CSRF
+        public async Task<IActionResult> ToggleDeleteStatus(int id) // id نمایش برای تغییر وضعیت حذف
+        {
+
+            // 1. واکشی نمایش از دیتابیس بر اساس شناسه (بدون فیلتر IsDeleted)
+            var showLists = await _context.ShowLists // DbSet برای مدل ShowLists
+                                          .FirstOrDefaultAsync(m => m.Id == id); // پیدا کردن نمایش بر اساس شناسه
+
+            // 2. بررسی وجود نمایش
+            if (showLists == null)
+            {
+                // اگر نمایشی با این شناسه پیدا نشد
+                return NotFound(); // یا Redirect به صفحه لیست با پیام خطا
+            }
+
+            // 3. تغییر وضعیت IsDeleted
+            showLists.IsDeleted = !showLists.IsDeleted; // برعکس کردن مقدار فعلی IsDeleted
+            showLists.ModifiedDate = DateTime.UtcNow; // به‌روزرسانی تاریخ ویرایش
+
+            // 4. اعلام به DbContext که مدل تغییر کرده است
+            _context.Update(showLists); // یا _context.Entry(showLists).State = EntityState.Modified;
+
+            // 5. ذخیره تغییر در دیتابیس
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // TODO: مدیریت خطا در زمان ذخیره تغییر وضعیت
+                Console.WriteLine($"Error during toggle delete status: {ex.Message}");
+                // می توانید لاگ کنید یا پیام خطا در صفحه لیست نمایش دهید.
+                ModelState.AddModelError("", "خطا در تغییر وضعیت حذف نمایش.");
+                // نیاز است ViewModel را برای نمایش خطا در صفحه مقصد (Index) پر کنید
+                return RedirectToAction(nameof(Index)); // فعلا فقط به صفحه لیست هدایت می کنیم
+            }
+
+
+            // 6. هدایت کاربر به صفحه لیست نمایش ها پس از تغییر وضعیت موفق
+            // نمایش در صفحه لیست اصلی نمایش داده می شود یا پنهان می شود بسته به وضعیت نهایی IsDeleted و فیلتر Index.
             return RedirectToAction(nameof(Index));
         }
 
